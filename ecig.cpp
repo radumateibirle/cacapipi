@@ -24,6 +24,7 @@ static void open_i2c_bus() {
 	if ((i2cbus = open(fileName, O_RDWR)) < 0) {
 		exit(1);
 	}
+	printf("Opened i2c bus\n");
 }
 
 static void close_i2c_bus() {
@@ -354,6 +355,7 @@ int backlight_enable_pin = 23;
 //display stuff
 void init_display() {
 	display_descriptor = wiringPiSPISetup(0, 1800000);
+	printf("Opened spi bus\n");
 	unsigned char c = 0X30;
 	wiringPiSPIDataRW(0, &c, 1);
 	wiringPiSPIDataRW(0, &c, 1);
@@ -762,31 +764,47 @@ void try_fire() {
 }
 
 int main() {
+	printf("hello\n");
 	setup_gpio();
+	printf("gpio set up\n");
 
 	read_display_matrix();
+	printf("display matrix read\n");
 	read_digits_matrix();
+	printf("digit matrices read\n");
 	init_display();
+	printf("display initialized\n");
 
 	initialize_variables();
+	printf("variables initialized\n");
 	write_resistance(resistance);
 	write_voltage(voltage);
 	write_current(current);
 	write_power(power);
 	write_temperature(temperature);
+	printf("values written in display buffer\n");
 
 	draw_display();
+	printf("first display frame printed\n");
 
 	//main while loop
+	printf("entering while loop\n");
 	while (true) {
 
 		check_temp();
+		printf("temp checked\n");
 		check_battery();
+		printf("battery checked\n");
 		compute_status();
+		printf("status computed\n");
 		read_resistance();
+		printf("resistance read\n");
 		encoder_processing();
+		printf("encoder processed\n");
 		set_backlight();
+		printf("backlight set\n");
 		try_fire();
+		printf("tried to fire\n");
 
 	}
 }
