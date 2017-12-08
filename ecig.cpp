@@ -194,10 +194,10 @@ void interrupt_digit3() {
 
 //other stuff
 int set_output(int currentPWM, int currentFeedback, int desiredFeedback) {
-	returnedPWM = currentPWM;
-	if (currentFeedback > desiredFeedback and returnedPWM > 0) :
+	int returnedPWM = currentPWM;
+	if (currentFeedback > desiredFeedback and returnedPWM > 0)
 		returnedPWM -= 1;
-	if (currentFeedback < desiredFeedback and returnedPWM < 990) :
+	if (currentFeedback < desiredFeedback and returnedPWM < 990)
 		returnedPWM += 1;
 	return returnedPWM;
 }
@@ -400,7 +400,8 @@ void compute_status() {
 			status = 3;
 		else
 			status = 2;
-	else
+	}
+	else {
 		if (low_batt_alarm == 1)
 			status = 1;
 		else
