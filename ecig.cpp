@@ -257,9 +257,9 @@ void read_digits_matrix() {
 }
 
 long long current_timestamp() {
-	struct timeval te;
+	struct timespec te;
 	clock_gettime(CLOCK_REALTIME, &te); // get current time
-	long long milliseconds = te.tv_sec * 1000LL + te.tv_usec / 1000; // caculate milliseconds
+	long long milliseconds = te.tv_sec * 1000LL + te.tv_nsec / 1000000LL; // caculate milliseconds
 	return milliseconds;
 }
 
