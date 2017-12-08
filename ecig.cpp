@@ -56,16 +56,16 @@ int backlight_enable_pin = 23;
 //display stuff
 void init_display() {
 	display_descriptor = wiringPiSPISetup(0, 1800000);
-	char c = 0X30;
-	wiringPiSPIDataRW(0, c, 1);
-	wiringPiSPIDataRW(0, c, 1);
+	unsigned char c = 0X30;
+	wiringPiSPIDataRW(0, &c, 1);
+	wiringPiSPIDataRW(0, &c, 1);
 	c = 0x0C;
-	wiringPiSPIDataRW(0, c, 1);
+	wiringPiSPIDataRW(0, &c, 1);
 	c = 0x34;
-	wiringPiSPIDataRW(0, c, 1);
-	wiringPiSPIDataRW(0, c, 1);
+	wiringPiSPIDataRW(0, &c, 1);
+	wiringPiSPIDataRW(0, &c, 1);
 	c = 0x36;
-	wiringPiSPIDataRW(0, c, 1);
+	wiringPiSPIDataRW(0, &c, 1);
 }
 
 void draw_display() {
@@ -73,16 +73,16 @@ void draw_display() {
 		int line[16];
 		for (int j = 0; j < 16; j++) line[i] = 0b00000000 | disp_array[j * 8 + 0][i][0] << 7 | disp_array[j * 8 + 1][i][0] << 6 | disp_array[j * 8 + 2][i][0] << 5 | disp_array[j * 8 + 3][i][0] << 4 | disp_array[j * 8 + 4][i][0] << 3 | disp_array[j * 8 + 5][i][0] << 2 | disp_array[j * 8 + 6][i][0] << 1 | disp_array[j * 8 + 7][i][0];
 
-		char c = 0b11111000;
-		wiringPiSPIDataRW(0, c, 1);
+		unsigned char c = 0b11111000;
+		wiringPiSPIDataRW(0, &c, 1);
 		c = 0x80 + i % 32;
-		wiringPiSPIDataRW(0, c, 1);
-		if (i >= 32) c = 0x88, wiringPiSPIDataRW(0, c, 1);
-		else c = 0x80, wiringPiSPIDataRW(0, c, 1);
+		wiringPiSPIDataRW(0, &c, 1);
+		if (i >= 32) c = 0x88, wiringPiSPIDataRW(0, &c, 1);
+		else c = 0x80, wiringPiSPIDataRW(0, &c, 1);
 
 		c = 0b11111010;
-		wiringPiSPIDataRW(0, c, 1);
-		for (int j = 0; j < 16; j++) c = line[j], wiringPiSPIDataRW(0, c, 1);
+		wiringPiSPIDataRW(0, &c, 1);
+		for (int j = 0; j < 16; j++) c = line[j], wiringPiSPIDataRW(0, &c, 1);
 	}
 }
 
@@ -175,19 +175,19 @@ void write_temperature(int val) {
 
 // interrupt functions
 void interrupt_digit1() {
-	for (int i = 0; i < 8; i++) dig[i] = wiringpi.digitalRead(ssd_pin[i]);
+	for (int i = 0; i < 8; i++) digit[i] = wiringpi.digitalRead(ssd_pin[i]);
 	ready = 1;
 	system("/usr/local/bin/gpio edge 16 none");
 }
 
 void interrupt_digit2() {
-	for (int i = 0; i < 8; i++) dig[i] = wiringpi.digitalRead(ssd_pin[i]);
+	for (int i = 0; i < 8; i++) digit[i] = wiringpi.digitalRead(ssd_pin[i]);
 	ready = 1;
 	system("/usr/local/bin/gpio edge 20 none");
 }
 
 void interrupt_digit3() {
-	for (int i = 0; i < 8; i++) dig[i] = wiringpi.digitalRead(ssd_pin[i]);
+	for (int i = 0; i < 8; i++) digit[i] = wiringpi.digitalRead(ssd_pin[i]);
 	ready = 1;
 	system("/usr/local/bin/gpio edge 21 none");
 }
@@ -231,7 +231,7 @@ void read_display_matrix() {
 	int fd = open("display.pixmap", O_RDONLY);
 	for (int i = 0; i < 64; i++)
 		for (int j = 0; j < 128; j++) {
-			char c;
+			unsigned char c;
 			read(fd, &c, 1);
 			if (c == '8') c = '0';
 			disp_array[j][i][0] = disp_array[j][i][1] = c - '0';
@@ -245,7 +245,7 @@ void read_digits_matrix() {
 	for (int i = 0; i < 10; i++)
 		for (int j = 0; j < 8; j++)
 			for (int k = 0; k < 5; k++) {
-				char c;
+				unsigned char c;
 				read(fd, &c, 1);
 				numbers_array[k][j][i] = c - '0';
 				read(fd, &c, 1);
@@ -271,7 +271,7 @@ int get_temp(int val) {
 
 void initialize_variables() {
 	int fd = open("settings.conf", O_RDONLY);
-	char reading[4] = { 0, 0, 0, 0 };
+	unsigned char reading[4] = { 0, 0, 0, 0 };
 	read(fd, &reading, 4);
 	resistance = reading[0] - '0' + (reading[2] - '0') / 10.0 + (reading[3] - '0') / 100.0;
 	read(fd, &reading, 4);
@@ -397,14 +397,14 @@ void check_battery() {
 void compute_status() {
 	if (high_temp == 1) {
 		if (low_batt_alarm == 1)
-			status = 3
+			status = 3;
 		else
-			status = 2
+			status = 2;
 	else
-			if (low_batt_alarm == 1)
-				status = 1
-			else
-				status = 0
+		if (low_batt_alarm == 1)
+			status = 1;
+		else
+			status = 0;
 	}
 }
 
@@ -419,19 +419,19 @@ void read_resistance() {
 		system("/usr/local/bin/gpio edge 16 falling");
 		while (ready == 0);
 		ready = 0;
-		int ssd = dig[0] + dig[1] * 2 + dig[2] * 4 + dig[3] * 8 + dig[4] * 16 + dig[5] * 32 + dig[6] * 64;
+		int ssd = digit[0] + digit[1] * 2 + digit[2] * 4 + digit[3] * 8 + digit[4] * 16 + digit[5] * 32 + digit[6] * 64;
 		resistance = abdcefg_to_dec(ssd);
 
 		system("/usr/local/bin/gpio edge 20 falling");
 		while (ready == 0);
 		ready = 0;
-		ssd = dig[0] + dig[1] * 2 + dig[2] * 4 + dig[3] * 8 + dig[4] * 16 + dig[5] * 32 + dig[6] * 64;
+		int ssd = digit[0] + digit[1] * 2 + digit[2] * 4 + digit[3] * 8 + digit[4] * 16 + digit[5] * 32 + digit[6] * 64;
 		resistance += abdcefg_to_dec(ssd) * 0.1;
 
 		system("/usr/local/bin/gpio edge 21 falling");
 		while (ready == 0);
 		ready = 0;
-		ssd = dig[0] + dig[1] * 2 + dig[2] * 4 + dig[3] * 8 + dig[4] * 16 + dig[5] * 32 + dig[6] * 64;
+		int ssd = digit[0] + digit[1] * 2 + digit[2] * 4 + digit[3] * 8 + digit[4] * 16 + digit[5] * 32 + digit[6] * 64;
 		resistance += abdcefg_to_dec(ssd) * 0.01;
 
 		write_resistance(resistance);
