@@ -3,6 +3,9 @@
 #include <math.h>
 #include <string>
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include "wiringPi/wiringPi/wiringPi.h"
 #include "wiringPi/wiringPi/wiringPiSPI.h"
 #include <time.h>
