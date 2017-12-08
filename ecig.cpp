@@ -3,8 +3,8 @@
 #include <math.h>
 #include <string>
 #include <iostream>
-#include "wiringPi.h"
-#include "wiringPiSPI.h"
+#include "wiringPi/wiringPi/wiringPi.h"
+#include "wiringPi/wiringPi/wiringPiSPI.h"
 #include <time.h>
 #include "ABE_ADCPi.h"
 
