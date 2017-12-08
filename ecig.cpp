@@ -17,7 +17,7 @@ static int i2cbus;
 const char *fileName = "/dev/i2c-1"; // change to /dev/i2c-0 if you are using a revision 0002 or 0003 model B
 unsigned char writebuffer[10] = { 0 };
 unsigned char readbuffer[10] = { 0 };
-char signbit = 0;
+static char sbit = 0;
 
 
 static void open_i2c_bus() {
@@ -175,7 +175,7 @@ int read_raw(char address, char channel, int bitrate, int pga,
 	char s = 0;
 	char config = 0x9C;
 	long t = 0;
-	signbit = 0;
+	sbit = 0;
 
 	// set the config based on the provided parameters
 	config = set_channel(config, channel);
@@ -224,28 +224,28 @@ int read_raw(char address, char channel, int bitrate, int pga,
 	case 18:
 		t = ((h & 3) << 16) | (m << 8) | l;
 		if ((t >> 17) & 1) {
-			signbit = 1;
+			sbit = 1;
 			t &= ~(1 << 17);
 		}
 		break;
 	case 16:
 		t = (h << 8) | m;
 		if ((t >> 15) & 1) {
-			signbit = 1;
+			sbit = 1;
 			t &= ~(1 << 15);
 		}
 		break;
 	case 14:
 		t = ((h & 63) << 8) | m;
 		if ((t >> 13) & 1) {
-			signbit = 1;
+			sbit = 1;
 			t &= ~(1 << 13);
 		}
 		break;
 	case 12:
 		t = ((h & 15) << 8) | m;
 		if ((t >> 11) & 1) {
-			signbit = 1;
+			sbit = 1;
 			t &= ~(1 << 11);
 		}
 		break;
@@ -293,7 +293,7 @@ double read_voltage(char address, char channel, int bitrate, int pga,
 		break;
 	}
 
-	if (signbit == 1) // if the signbit is 1 the value is negative and most likely noise so it can be ignored.
+	if (sbit == 1) // if the signbit is 1 the value is negative and most likely noise so it can be ignored.
 	{
 		return (0);
 	}
