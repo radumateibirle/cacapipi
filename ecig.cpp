@@ -17,12 +17,11 @@ static int i2cbus;
 const char *fileName = "/dev/i2c-1"; // change to /dev/i2c-0 if you are using a revision 0002 or 0003 model B
 unsigned char writebuffer[10] = { 0 };
 unsigned char readbuffer[10] = { 0 };
-static char signbit = 0;
+char signbit = 0;
 
 
 static void open_i2c_bus() {
 	if ((i2cbus = open(fileName, O_RDWR)) < 0) {
-		printf("Failed to open i2c port for read %s \n", strerror(errno));
 		exit(1);
 	}
 }
