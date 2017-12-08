@@ -9,7 +9,6 @@
 #include "wiringPi/wiringPi/wiringPi.h"
 #include "wiringPi/wiringPi/wiringPiSPI.h"
 #include <time.h>
-#include <librt.h>
 #include "ABE_ADCPi.h"
 
 float resistance = 0.0;
