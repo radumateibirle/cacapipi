@@ -3,7 +3,7 @@
 #include <math.h>
 #include <string>
 #include <iostream>
-#include "wiringPi/wiringPi/wiringPi.h"
+#include "wiringPi/wiringPi/wiringpi.h"
 #include "wiringPi/wiringPi/wiringPiSPI.h"
 #include <time.h>
 #include "ABE_ADCPi.h"
@@ -175,19 +175,19 @@ void write_temperature(int val) {
 
 // interrupt functions
 void interrupt_digit1() {
-	for (int i = 0; i < 8; i++) digit[i] = wiringPi.digitalRead(ssd_pin[i]);
+	for (int i = 0; i < 8; i++) digit[i] = wiringpi.digitalRead(ssd_pin[i]);
 	ready = 1;
 	system("/usr/local/bin/gpio edge 16 none");
 }
 
 void interrupt_digit2() {
-	for (int i = 0; i < 8; i++) digit[i] = wiringPi.digitalRead(ssd_pin[i]);
+	for (int i = 0; i < 8; i++) digit[i] = wiringpi.digitalRead(ssd_pin[i]);
 	ready = 1;
 	system("/usr/local/bin/gpio edge 20 none");
 }
 
 void interrupt_digit3() {
-	for (int i = 0; i < 8; i++) digit[i] = wiringPi.digitalRead(ssd_pin[i]);
+	for (int i = 0; i < 8; i++) digit[i] = wiringpi.digitalRead(ssd_pin[i]);
 	ready = 1;
 	system("/usr/local/bin/gpio edge 21 none");
 }
@@ -281,78 +281,78 @@ void initialize_variables() {
 	int temp_read = read_voltage(0x68, 2, 12, 1, 0);
 	temperature = get_temp(temp_read);
 
-	enc_clk_last_state = wiringPi.digitalRead(enc_clk_pin);
+	enc_clk_last_state = wiringpi.digitalRead(enc_clk_pin);
 }
 
 void setup_gpio() {
-	wiringPi.wiringPiSetupGpio();
+	wiringpi.wiringPiSetupGpio();
 
-	wiringPi.pinMode(backlight_enable_pin, 2); //sets backlight enable pin as output with pwm;
-	wiringPi.pwmWrite(backlight_enable_pin, 190); //assume 0-255. high pwm, low brightness
+	wiringpi.pinMode(backlight_enable_pin, 2); //sets backlight enable pin as output with pwm;
+	wiringpi.pwmWrite(backlight_enable_pin, 190); //assume 0-255. high pwm, low brightness
 
-	wiringPi.pinMode(pwm_pin, 2); //enables pcm clk pwm
-	wiringPi.pwmSetClock(30); //sets freq to 320khz
+	wiringpi.pinMode(pwm_pin, 2); //enables pcm clk pwm
+	wiringpi.pwmSetClock(30); //sets freq to 320khz
 
-	wiringPi.pinMode(fire_pin, 0); //sets firing pin as input
-	wiringPi.pullUpDnControl(fire_pin, 2); //with pull up
+	wiringpi.pinMode(fire_pin, 0); //sets firing pin as input
+	wiringpi.pullUpDnControl(fire_pin, 2); //with pull up
 
-	wiringPi.pinMode(enc_clk_pin, 0); //sets encoder clock pin as input
-	wiringPi.pullUpDnControl(enc_clk_pin, 1); //with pull down
+	wiringpi.pinMode(enc_clk_pin, 0); //sets encoder clock pin as input
+	wiringpi.pullUpDnControl(enc_clk_pin, 1); //with pull down
 
-	wiringPi.pinMode(enc_data_pin, 0); //sets encoder data pin as input
-	wiringPi.pullUpDnControl(enc_data_pin, 1); //with pull down
+	wiringpi.pinMode(enc_data_pin, 0); //sets encoder data pin as input
+	wiringpi.pullUpDnControl(enc_data_pin, 1); //with pull down
 
-	wiringPi.pinMode(enc_switch_pin, 0); //sets encoder switch pin as input
-	wiringPi.pullUpDnControl(enc_switch_pin, 1); //with pull down
+	wiringpi.pinMode(enc_switch_pin, 0); //sets encoder switch pin as input
+	wiringpi.pullUpDnControl(enc_switch_pin, 1); //with pull down
 
-	wiringPi.pinMode(enable_res_read_pin, 1); //sets read resistance pin as output
+	wiringpi.pinMode(enable_res_read_pin, 1); //sets read resistance pin as output
 
-	wiringPi.pinMode(digit1_pin, 0); //digit 1 as input
-	wiringPi.pullUpDnControl(digit1_pin, 2); //with pull up
+	wiringpi.pinMode(digit1_pin, 0); //digit 1 as input
+	wiringpi.pullUpDnControl(digit1_pin, 2); //with pull up
 	wiringPiISR(digit1_pin, INT_EDGE_FALLING, &interrupt_digit1);
 	system("/usr/local/bin/gpio edge 16 none");
 
-	wiringPi.pinMode(digit2_pin, 0); //digit 2 as input
-	wiringPi.pullUpDnControl(digit2_pin, 2); //with pull up
+	wiringpi.pinMode(digit2_pin, 0); //digit 2 as input
+	wiringpi.pullUpDnControl(digit2_pin, 2); //with pull up
 	wiringPiISR(digit2_pin, INT_EDGE_FALLING, &interrupt_digit2);
 	system("/usr/local/bin/gpio edge 20 none");
 
-	wiringPi.pinMode(digit3_pin, 0); //digit 3 as input
-	wiringPi.pullUpDnControl(digit3_pin, 2); //with pull up
+	wiringpi.pinMode(digit3_pin, 0); //digit 3 as input
+	wiringpi.pullUpDnControl(digit3_pin, 2); //with pull up
 	wiringPiISR(digit3_pin, INT_EDGE_FALLING, &interrupt_digit3);
 	system("/usr/local/bin/gpio edge 21 none");
 
-	wiringPi.pinMode(a_pin, 0); //a as input
-	wiringPi.pullUpDnControl(a_pin, 1); //with pull down
+	wiringpi.pinMode(a_pin, 0); //a as input
+	wiringpi.pullUpDnControl(a_pin, 1); //with pull down
 
-	wiringPi.pinMode(b_pin, 0); //b as input
-	wiringPi.pullUpDnControl(b_pin, 1); //with pull down
+	wiringpi.pinMode(b_pin, 0); //b as input
+	wiringpi.pullUpDnControl(b_pin, 1); //with pull down
 
-	wiringPi.pinMode(c_pin, 0); //c as input
-	wiringPi.pullUpDnControl(c_pin, 1); //with pull down
+	wiringpi.pinMode(c_pin, 0); //c as input
+	wiringpi.pullUpDnControl(c_pin, 1); //with pull down
 
-	wiringPi.pinMode(d_pin, 0); //d as input
-	wiringPi.pullUpDnControl(d_pin, 1); //with pull down
+	wiringpi.pinMode(d_pin, 0); //d as input
+	wiringpi.pullUpDnControl(d_pin, 1); //with pull down
 
-	wiringPi.pinMode(e_pin, 0); //e as input
-	wiringPi.pullUpDnControl(e_pin, 1); //with pull down
+	wiringpi.pinMode(e_pin, 0); //e as input
+	wiringpi.pullUpDnControl(e_pin, 1); //with pull down
 
-	wiringPi.pinMode(f_pin, 0); //f as input
-	wiringPi.pullUpDnControl(f_pin, 1); //with pull down
+	wiringpi.pinMode(f_pin, 0); //f as input
+	wiringpi.pullUpDnControl(f_pin, 1); //with pull down
 
-	wiringPi.pinMode(g_pin, 0); //g as input
-	wiringPi.pullUpDnControl(g_pin, 1); //with pull down
+	wiringpi.pinMode(g_pin, 0); //g as input
+	wiringpi.pullUpDnControl(g_pin, 1); //with pull down
 
-	wiringPi.pinMode(dot_pin, 0); //dot as input
-	wiringPi.pullUpDnControl(dot_pin, 1); //with pull down
+	wiringpi.pinMode(dot_pin, 0); //dot as input
+	wiringpi.pullUpDnControl(dot_pin, 1); //with pull down
 
-	wiringPi.pinMode(low_batt_pin, 0); //low battery red as input
-	wiringPi.pullUpDnControl(low_batt_pin, 1); //with pull down
+	wiringpi.pinMode(low_batt_pin, 0); //low battery red as input
+	wiringpi.pullUpDnControl(low_batt_pin, 1); //with pull down
 }
 
 void encoder_processing() {
-	int clk_state = wiringPi.digitalRead(enc_clk_pin);
-	int dt_state = wiringPi.digitalRead(enc_data_pin);
+	int clk_state = wiringpi.digitalRead(enc_clk_pin);
+	int dt_state = wiringpi.digitalRead(enc_data_pin);
 	if (clk_state != enc_clk_last_state) {
 		high_backlight = 1;
 		if (dt_state != clk_state) {
@@ -391,7 +391,7 @@ void check_temp() {
 }
 
 void check_battery() {
-	if (wiringPi.digitalRead(low_batt_pin)) low_batt_alarm = 1;
+	if (wiringpi.digitalRead(low_batt_pin)) low_batt_alarm = 1;
 }
 
 void compute_status() {
@@ -410,11 +410,11 @@ void compute_status() {
 }
 
 void read_resistance() {
-	if (wiringPi.digitalRead(enc_switch_pin) == 1) {
+	if (wiringpi.digitalRead(enc_switch_pin) == 1) {
 		high_backlight = 1;
 		set_backlight();
 
-		wiringPi.digitalWrite(enable_res_read_pin, 1);
+		wiringpi.digitalWrite(enable_res_read_pin, 1);
 		sleep_ms(2000);
 
 		system("/usr/local/bin/gpio edge 16 falling");
@@ -438,28 +438,28 @@ void read_resistance() {
 		write_resistance(resistance);
 		draw_display();
 
-		wiringPi.digitalWrite(enable_res_read_pin, 0);
+		wiringpi.digitalWrite(enable_res_read_pin, 0);
 	}
 }
 
 void try_fire() {
 	long long firing_length = current_timestamp();
-	while ((wiringPi.digitalRead(fire_pin) != 1) and (status == 0) and (current_timestamp() - firing_length < 7000)) {
+	while ((wiringpi.digitalRead(fire_pin) != 1) and (status == 0) and (current_timestamp() - firing_length < 7000)) {
 		high_backlight = 1;
 		set_backlight();
-		wiringPi.pwmWrite(pwm_pin, output_pwm);
+		wiringpi.pwmWrite(pwm_pin, output_pwm);
 		output_pwm = set_output(output_pwm, read_voltage(0x68, 1, 12, 1, 0), computed_feedback);
 	}
 }
 
 void set_backlight() {
 	if (high_backlight == 1) {
-		wiringPi.pwmWrite(backlight_enable_pin, 60);
+		wiringpi.pwmWrite(backlight_enable_pin, 60);
 		backlight_time = current_timestamp();
 		high_backlight = 0;
 	}
 	else if (current_timestamp() - backlight_time > 5000) {
-		wiringPi.pwmWrite(backlight_enable_pin, 190);
+		wiringpi.pwmWrite(backlight_enable_pin, 190);
 	}
 }
 
