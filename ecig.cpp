@@ -9,6 +9,7 @@
 #include "wiringPi/wiringPi/wiringPi.h"
 #include "wiringPi/wiringPi/wiringPiSPI.h"
 #include <time.h>
+#include <librt.h>
 #include "ABE_ADCPi.h"
 
 float resistance = 0.0;
@@ -258,7 +259,7 @@ void read_digits_matrix() {
 
 long long current_timestamp() {
 	struct timeval te;
-	gettimeofday(&te, NULL); // get current time
+	clock_gettime(CLOCK_REALTIME, &te); // get current time
 	long long milliseconds = te.tv_sec * 1000LL + te.tv_usec / 1000; // caculate milliseconds
 	return milliseconds;
 }
