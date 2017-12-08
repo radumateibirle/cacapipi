@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string>
-#include <iostream>
+#include <unistd.h>
 #include "wiringPi/wiringPi/wiringPi.h"
 #include "wiringPi/wiringPi/wiringPiSPI.h"
 #include <time.h>
@@ -409,6 +409,17 @@ void compute_status() {
 	}
 }
 
+void set_backlight() {
+	if (high_backlight == 1) {
+		pwmWrite(backlight_enable_pin, 60);
+		backlight_time = current_timestamp();
+		high_backlight = 0;
+	}
+	else if (current_timestamp() - backlight_time > 5000) {
+		pwmWrite(backlight_enable_pin, 190);
+	}
+}
+
 void read_resistance() {
 	if (digitalRead(enc_switch_pin) == 1) {
 		high_backlight = 1;
@@ -449,17 +460,6 @@ void try_fire() {
 		set_backlight();
 		pwmWrite(pwm_pin, output_pwm);
 		output_pwm = set_output(output_pwm, read_voltage(0x68, 1, 12, 1, 0), computed_feedback);
-	}
-}
-
-void set_backlight() {
-	if (high_backlight == 1) {
-		pwmWrite(backlight_enable_pin, 60);
-		backlight_time = current_timestamp();
-		high_backlight = 0;
-	}
-	else if (current_timestamp() - backlight_time > 5000) {
-		pwmWrite(backlight_enable_pin, 190);
 	}
 }
 
