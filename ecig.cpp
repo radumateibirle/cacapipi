@@ -22,14 +22,14 @@ int status = 0;
 int computed_feedback = 0;
 long long temp_write_time = 0;
 long long backlight_time = 0;
-byte digit[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
-byte ready = 0;
-byte high_backlight = 0;
+int digit[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+int ready = 0;
+int high_backlight = 0;
 int display_descriptor;
 
 #pragma region pin definitions
-byte disp_array[128][64][2];
-byte numbers_array[5][8][10];
+int disp_array[128][64][2];
+int numbers_array[5][8][10];
 int pwm_pin = 18;
 int fire_pin = 14;
 int enc_clk_pin = 15;
@@ -47,7 +47,7 @@ int e_pin = 5;
 int f_pin = 12;
 int g_pin = 25;
 int dot_pin = 24;
-int ssd_pin = { 26, 19, 13, 6, 5, 12, 25, 24 };
+int ssd_pin[] = { 26, 19, 13, 6, 5, 12, 25, 24 };
 int low_batt_pin = 22;
 int backlight_enable_pin = 23;
 #pragma end region
@@ -56,26 +56,33 @@ int backlight_enable_pin = 23;
 //display stuff
 void init_display() {
 	display_descriptor = wiringPiSPISetup(0, 1800000);
-	wiringPiSPIDataRW(0, 0x30, 1);
-	wiringPiSPIDataRW(0, 0x30, 1);
-	wiringPiSPIDataRW(0, 0x0C, 1);
-	wiringPiSPIDataRW(0, 0x34, 1);
-	wiringPiSPIDataRW(0, 0x34, 1);
-	wiringPiSPIDataRW(0, 0x36, 1);
+	char c = 0X30;
+	wiringPiSPIDataRW(0, c, 1);
+	wiringPiSPIDataRW(0, c, 1);
+	c = 0x0C;
+	wiringPiSPIDataRW(0, c, 1);
+	c = 0x34;
+	wiringPiSPIDataRW(0, c, 1);
+	wiringPiSPIDataRW(0, c, 1);
+	c = 0x36;
+	wiringPiSPIDataRW(0, c, 1);
 }
 
-void draw_display(int n) {
+void draw_display() {
 	for (int i = 0; i < 64; i++) {
-		byte line[16];
+		int line[16];
 		for (int j = 0; j < 16; j++) line[i] = 0b00000000 | disp_array[j * 8 + 0][i][0] << 7 | disp_array[j * 8 + 1][i][0] << 6 | disp_array[j * 8 + 2][i][0] << 5 | disp_array[j * 8 + 3][i][0] << 4 | disp_array[j * 8 + 4][i][0] << 3 | disp_array[j * 8 + 5][i][0] << 2 | disp_array[j * 8 + 6][i][0] << 1 | disp_array[j * 8 + 7][i][0];
 
-		wiringPiSPIDataRW(0, 0b11111000, 1);
-		wiringPiSPIDataRW(0, 0x80 + i % 32, 1);
-		if (i >= 32) wiringPiSPIDataRW(0, 0x88, 1);
-		else wiringPiSPIDataRW(0, 0x80);
+		char c = 0b11111000;
+		wiringPiSPIDataRW(0, c, 1);
+		c = 0x80 + i % 32;
+		wiringPiSPIDataRW(0, c, 1);
+		if (i >= 32) c = 0x88, wiringPiSPIDataRW(0, c, 1);
+		else c = 0x80, wiringPiSPIDataRW(0, c, 1);
 
-		wiringPiSPIDataRW(0, 0b11111010, 1);
-		for (int j = 0; j < 16; j++) wiringPiSPIDataRW(0, line[j], 1);
+		c = 0b11111010;
+		wiringPiSPIDataRW(0, c, 1);
+		for (int j = 0; j < 16; j++) c = line[j], wiringPiSPIDataRW(0, c, 1);
 	}
 }
 
@@ -349,15 +356,15 @@ void encoder_processing() {
 	if (clk_state != enc_clk_last_state) {
 		high_backlight = 1;
 		if (dt_state != clk_state) {
-			#increase
-				if (voltage < 9.0) power += 1;
+			//increase
+			if (voltage < 9.0) power += 1;
 		}
 		else {
-			#decrease
-				if (voltage > 0.0) power -= 1;
+			//decrease
+			if (voltage > 0.0) power -= 1;
 		}
-		#power is in w.between 0 and 5000
-			voltage = sqrt(power * resistance);
+		//power is in w.between 0 and 5000
+		voltage = sqrt(power * resistance);
 		current = sqrt(power / resistance);
 		computed_feedback = (int)(bias*voltage * 4096 / 9.0);
 		write_voltage(voltage);
@@ -388,16 +395,17 @@ void check_battery() {
 }
 
 void compute_status() {
-	if high_temp == 1:
-	if low_batt_alarm == 1 :
-		status = 3
-	else :
-		status = 2
-	else:
-	if low_batt_alarm == 1 :
-		status = 1
-	else :
-		status = 0
+	if (high_temp == 1) {
+		if (low_batt_alarm == 1)
+			status = 3
+		else
+			status = 2
+	else
+			if (low_batt_alarm == 1)
+				status = 1
+			else
+				status = 0
+	}
 }
 
 void read_resistance() {
