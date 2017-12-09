@@ -1,3 +1,6 @@
+//compile with gcc ecig.cpp -lwiringPi -lm -o ecig
+//run with sudo ./ecig
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
